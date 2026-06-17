@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Core Pages -->
+    <url>
+        <loc>https://sendin.us/</loc>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/pricing</loc>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/terms-conditions</loc>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/cookie-policy</loc>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/support</loc>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Blog Hub -->
+    <url>
+        <loc>https://sendin.us/blogs</loc>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Blog Posts -->
+    <url>
+        <loc>https://sendin.us/blog/chrome-extension</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/blog/bulk-schedule</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/blog/message-templates</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/blog/timezone-intelligence</loc>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Other Pages from Footer Links -->
+    <url>
+        <loc>https://sendin.us/getting-started</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/use-cases</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://sendin.us/sitemap.xml</loc>
+        <priority>0.3</priority>
+    </url>
+
+</urlset>

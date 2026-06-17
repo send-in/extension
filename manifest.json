@@ -1,0 +1,39 @@
+{
+    "name": "SendIn",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "description": "Schedule LinkedIn outreach.",
+     
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "SendIn"
+    },
+
+    "permissions": [
+        "storage",
+        "cookies",
+        "alarms",
+        "tabs",
+        "scripting"
+    ],
+
+    "host_permissions": [
+        "https://www.linkedin.com/*",
+        "https://*.linkedin.com/*",
+        "http://localhost:8080/*",
+        "http://localhost:8000/*",
+        "https://api.sendin.app/*"
+    ],
+
+    "web_accessible_resources": [
+        {
+            "resources": ["templates.html"],
+            "matches": ["<all_urls>"]
+        }
+    ],
+
+    "icons": {
+        "192": "logo192.png",
+        "512": "logo512.png"
+    }
+}
