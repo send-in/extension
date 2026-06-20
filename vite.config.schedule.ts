@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -14,15 +13,17 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
         },
     },
-    server: {
-        port: 3000,
-    },
     build: {
+        emptyOutDir: false,
         rollupOptions: {
             input: {
-                popup: path.resolve(__dirname, 'index.html'),
+                content: path.resolve(__dirname, 'src/schedule.tsx'),
+            },
+            output: {
+                entryFileNames: 'schedule.js',
+                format: 'iife',
+                inlineDynamicImports: true,
             },
         },
     },
 })
- 

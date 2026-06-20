@@ -6,22 +6,31 @@ import {
     useLocation,
 } from "react-router-dom"
 
-import { Logo, Refresh } from "@/icons"
+import { Logo } from "@/icons"
 import { Button } from "@/base"
 // #endregion
+
+const linkClass = `
+    hover:text-white
+    text-white/60 smooth cursor-pointer 
+    data-[selected=true]:text-white
+` 
 
 const links = [
 	{
 		href: "/messages",
-		label: "Messages"
+		label: "Messages",
+        type: "internal"
 	},
 	{
 		href: "/templates",
-		label: "Templates"
+		label: "Templates",
+        type: "internal"
 	},
     {
 		href: "https://sendin.com/profile",
-		label: "Account"
+		label: "Account",
+        type: "external"
 	}
 ]
 
@@ -39,82 +48,68 @@ export const Navbar = ({
 	return (
 		<nav
 			className="
-				px-2 w-full mb-4 flex items-end 
+				w-full flex items-end
                 gap-10 z-100 justify-between
                 font-medium text-charcoal-200
-                absolute top-2
 			"
 		>
-            <section>
-                {
-                    picture ?
-                    <img
-                        className="rounded-full h-48 w-48 mt-2 ml-2"
-                        alt={name || "SendIn"}
-                        src={picture || "/profile.svg"}
-                    /> :
-                    <Logo 
-                        size={60} 
-                        className="fill-blue-100"
-                    />
-                }
+            <section className="flex gap-2 items-center">
+                <img
+                    className="rounded-full h-14 w-14 mt-2 ml-2"
+                    alt={name || "SendIn"}
+                    src={picture || "/profile.svg"}
+                /> 
 
                 <aside className="
-                    text-2xl text-blue-100
-                    flex flex-col items-end
+                    text-xl text-blue-100
+                    flex flex-col items-start
                 ">
                     <p>{name || "SendIn"}</p>
-                    <Button
-                        
-                        startIcon={<Refresh size={20}/>}
+                     <Button
                         size="xs"
+                        startIcon={<Logo size={20}/>}
+                        onClick={() => {
+                            chrome.tabs.create({
+                                url: "https://sendin.com/"
+                            })
+                        }}
                     >
-                        Reconnect
+                        Dashboard
                     </Button>
                 </aside>
             </section>
 
             <section className="
-                py-2 pr-2 w-[60%] flex items-center 
-                gap-2 z-100 justify-between 
-                rounded-full bg-bluewash 
+                py-2 px-8 w-[50%] flex
+                items-center z-100 justify-between 
+                rounded-full bg-blue-100 text-sm
             ">
-                <aside
-                    className="flex gap-5 text-sm"
-                >
-                    {links.map((
-                        {
-                            href,
-                            label
-                        }) => (
-                        <Link
-                            key={href}
-                            to={href}
-                            data-selected={
-                                href === "/"
-                                ? pathname === "/"
-                                : pathname.startsWith(href)
-                            }
-                            className="
-                                hover:text-charcoal-100 
-                                text-grey-300 smooth cursor-pointer 
-                                data-[selected=true]:text-charcoal-100
-                            "
-                        >
-                            {label}
-                        </Link>
-                    ))}
-                </aside>
-
-
-                <Link to="https://sendin.com/">
-                    <Button
-                        size="xs"
-                        startIcon={<Logo size={14}/>}
+                {links.map((
+                    {
+                        href,
+                        label,
+                        type
+                    }) => (
+                    type === "external" ?
+                    <p
+                        key={href}
+                        className={linkClass}
+                        data-selected={href === pathname}
+                        onClick={() => {
+                            chrome.tabs.create({url: href})
+                        }}
                     >
-                        Dashboard
-                    </Button>
-                </Link>
+                        {label}   
+                    </p> :
+                    <Link
+                        key={href}
+                        to={href}
+                        data-selected={href === pathname}
+                        className={linkClass}
+                    >
+                        {label}
+                    </Link>
+                ))}
             </section>
 
 		</nav>

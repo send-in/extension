@@ -7,7 +7,7 @@ import {
 	ReactNode,
 } from "react"
 
-import { cn, toDateTimeLocal } from "@/utils"
+import { cn } from "@/utils"
 // #endregion
 
 const dateTimeVariants = {

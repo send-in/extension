@@ -20,47 +20,57 @@ import {
 } from "@/base"
 // #endregion
 
-const DateTime = ({
-    timezone,
-    dateTime,
+const DEFAULT_TIMEZONE = "Asia/Kolkata"
 
-    onTimezoneChange,
-    onDateChange,
-
-    profile,
-}:{
+const DateTime = ({ timezone }:{
     timezone?: string
-    dateTime?: string
-
-    onTimezoneChange?: (value: string) => void
-    onDateChange?: (value: string) => void
-
-    profile?: {
-        name?: string
-        picture?: string
-    }
 }) => {
     const [open, setOpen] = useState<boolean>(false)
 
-    const activeTimezone = timezone || "Asia/Kolkata"
-
+    const [selectedTimezone, setSelectedTimezone] = useState<string>(
+        timezone || DEFAULT_TIMEZONE
+    )
+    
     const {
         current,
         morning,
         afternoon,
         evening,
-    } = useTimezone("", activeTimezone)
+    } = useTimezone({
+        zone: selectedTimezone
+    })
+    
+    const [selectedDateTime, setSelectedDateTime] 
+        = useState<string | undefined>(morning.scheduledAt)
 
     const selected = {
-        morning:   dateTime === morning.scheduledAt,
-        afternoon: dateTime === afternoon.scheduledAt,
-        evening:   dateTime === evening.scheduledAt,
+        morning:   selectedDateTime === morning.scheduledAt,
+        afternoon: selectedDateTime === afternoon.scheduledAt,
+        evening:   selectedDateTime === evening.scheduledAt,
     }
 
     const customValue = toDateTimeLocal(
-        dateTime ? new Date(dateTime) : new Date(),
-        activeTimezone,
+        selectedDateTime ? new Date(selectedDateTime) : new Date(),
+        selectedTimezone,
     )
+    const resetToSaved = () => {
+        setSelectedTimezone(timezone || DEFAULT_TIMEZONE)
+        setSelectedDateTime(undefined)
+    }
+
+    const handleOpen = () => {
+        resetToSaved()
+        setOpen(true)
+    }
+
+    const handleCancel = () => {
+        resetToSaved()
+        setOpen(false)
+    }
+
+    const handleSave = () => {
+        setOpen(false)
+    }
 
     const handleCustomDate = (localValue: string) => {
         if (!localValue) return
@@ -70,14 +80,14 @@ const DateTime = ({
         const [hour, minute]       = timePart.split(":").map(Number)
  
         const date = createDateInTimezone(
-            year, month, day, hour, activeTimezone, minute,
+            year, month, day, hour, selectedTimezone, minute,
         )
- 
-        onDateChange?.(date.toISOString())
+
+        setSelectedDateTime(date.toISOString())
     }
 
 	return (
-		<Popover
+        <Popover
             className="
                 top-36 desktop:top-52 
                 right-0 desktop:right-48
@@ -87,31 +97,24 @@ const DateTime = ({
             modalOpen={open}
 			trigger={
 				<Button
-					className="font-medium! tracking-normal!"
-					variant="primary"
+					className="gap-3 min-w-58!"
+					variant={"primary"}
                     onClick={()=>setOpen(true)}
-					startIcon={<Logo />}
+					startIcon={<Logo/>}
 				>
 					Schedule
 				</Button>
 			}
 		>
+	
 			<section className="
                 flex justify-between 
                 items-center px-2
             ">
-                {
-                    profile ?
-                    <img
-                        className="rounded-full h-48 w-48 mt-2 ml-2"
-                        alt={profile?.name || "SendIn"}
-                        src={profile?.picture || "/profile.svg"}
-                    /> :
-                    <Logo 
-                        size={60} 
-                        className="fill-blue-100"
-                    />
-                }
+                <Logo 
+                    size={60} 
+                    className="fill-blue-100"
+                />
 
 				<aside className="
                     flex flex-col w-max
@@ -123,14 +126,13 @@ const DateTime = ({
 
 					<TimeZone
                         className="w-full!"
-                        value={activeTimezone}
-                        onChange={onTimezoneChange}
+                        value={selectedTimezone}
+                        onChange={setSelectedTimezone}
                     />
 				</aside>
 			</section>
 
             {
-                profile &&
                 <Information
                     description="time is displayed  as in receiver's time zone"
                 />
@@ -140,14 +142,10 @@ const DateTime = ({
 				className="flex flex-col gap-2"
 			>
 				<Button
-					className="!py-1"
+					className="py-1!"
 					textClassName="justify-between w-full !flex"
                     variant={selected.morning ? "primary" : "neutral"}
-                    onClick={() =>
-                        onDateChange?.(
-                            morning.scheduledAt
-                        )
-                    }
+                    onClick={() => setSelectedDateTime(morning.scheduledAt)}
 				>
 						<span>{morning?.label}</span>
 						<span>{`${morning?.date}, ${morning?.time}`}</span>
@@ -156,12 +154,8 @@ const DateTime = ({
 				<Button
 					textClassName="justify-between w-full !flex"
 					variant={selected.afternoon ? "primary" : "neutral"}
-					className="!py-1"
-                    onClick={() =>
-                        onDateChange?.(
-                            afternoon.scheduledAt
-                        )
-                    }
+					className="py-1!"
+                    onClick={() => setSelectedDateTime(afternoon.scheduledAt)}
 				>
 						<span>{afternoon?.label}</span>
 						<span>{`${afternoon?.date}, ${afternoon?.time}`}</span>
@@ -170,12 +164,8 @@ const DateTime = ({
 				<Button
                     textClassName="justify-between w-full !flex"
                     variant={selected.evening ? "primary" : "neutral"}
-					className="!py-1"
-                    onClick={() =>
-                        onDateChange?.(
-                            evening.scheduledAt
-                        )
-                    }
+					className="py-1!"
+                    onClick={() => setSelectedDateTime(evening.scheduledAt)}
 				>
 						<span>{evening?.label}</span>
 						<span>{`${evening?.date}, ${evening?.time}`}</span>
@@ -208,13 +198,19 @@ const DateTime = ({
             >
                 <Button
                     size="auto"
+                    variant="neutral"
+                    onClick={handleCancel}
+                >
+                    Cancel
+                </Button>
+
+                <Button
+                    size="auto"
                     loadingText="Saving"
                     variant="secondary"
-                    onClick={
-                        () => setOpen(false)
-                    }
+                    onClick={handleSave}
                 >
-                    Done
+                    Save
                 </Button>
             </section>
 		</Popover>

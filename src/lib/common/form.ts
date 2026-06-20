@@ -14,14 +14,6 @@ export interface IFormResponse<T> {
 	data?: Record<keyof T, string>
 }
 
-export const parseForm = <T>(formData: FormData): Record<keyof T, string> =>
-	Object.fromEntries(
-		Array.from(formData.entries(), ([key, value]) => [
-			key,
-			typeof value === "string" ? value : String(value),
-		])
-	) as Record<keyof T, string>
-
 export const validateForm = <T>(
   data: T,
   rules: IValidator<T>

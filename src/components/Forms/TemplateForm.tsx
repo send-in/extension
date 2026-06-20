@@ -1,38 +1,68 @@
 "use client"
 
 // #region imports
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { parseLexicalHTML } from "@/utils"
+import { 
+    useEffect, 
+    useState 
+} from "react"
+
 import { Search } from "@/icons"
-import { ITemplate } from "@/lib"
 import { TemplateCard } from "@/components"
+import { parseLexicalHTML } from "@/utils"
+import { useSearchParams } from "react-router-dom"
+
+import { 
+    getTemplates, 
+    ITemplate 
+} from "@/lib"
 
 import { 
 	Button, 
 	IconButton,
+    Pagination,
     TextField
 } from "@/base"
 // #endregion
 
-interface ITemplateForm {
-    templates: ITemplate[]
-    page?: number
-    total?: number
-	sort?: string
-    q?: string
-}
+export const TemplateForm = () => {
 
-export const TemplateForm = ({
-    templates,
-    // page,
-    // total,
-	// sort,
-    q,
-}: ITemplateForm) => {
-    const [selected, setSelected] = useState<ITemplate | undefined>(
-        templates?.at(0)
-    )
+    const [searchParams, setSearchParams] = useSearchParams()
+    const page = Number(searchParams.get("page") ?? 1)
+    const q = searchParams.get("q") ?? ""
+
+    const [total, setTotal] = useState(0)
+    const [templates, setTemplates] = useState<ITemplate[]>([])
+    const [selected, setSelected] = 
+        useState<ITemplate | undefined>(templates?.at(0))
+    
+    useEffect(() => {
+        (async () => {
+            const {data, total = 0} = await getTemplates({ 
+                limit: 5,
+                page,
+                q
+            })
+
+            if(data){
+                setTemplates(data)
+                setSelected(data?.at(0))
+                setTotal(total)
+            }
+        })()
+    }, [page, q])
+
+    const searchQuery = (value?: string) => {
+        const params = new URLSearchParams(searchParams)
+        if (value === undefined || value === "") {
+            params.delete("q")
+        } else {
+            params.set("q", String(value))
+        }
+
+        params.set("page", "1")
+        setSearchParams(params)
+    }
+
 
 	return (
 		<>
@@ -40,8 +70,8 @@ export const TemplateForm = ({
 				data-length={(templates.length || 0) > 0}
 				data-single={(templates.length || 0) < 10}
 				className="
-					flex flex-col gap-4 w-[45%] rounded-2xl 
-					h-auto relative items-start group 
+					flex flex-col gap-2 w-[50%] rounded-2xl 
+					h-full relative items-start group 
                     
                     data-[length=false]:h-full
 					data-[length=false]:justify-center 
@@ -54,7 +84,7 @@ export const TemplateForm = ({
                     <>
                         <section className="
                             w-full flex items-center 
-                            justify-between gap-12
+                            justify-between gap-10
                         ">
                             <TextField
                                 size="sm"
@@ -63,23 +93,16 @@ export const TemplateForm = ({
                                 className="text-black!"
                                 variant="filled"
                                 placeholder="Search"
-                                // onKeyDown={(e) => {
-                                //     if (e.key === "Enter") {
-                                //         e.currentTarget.blur()
-
-                                //         updateQuery(
-                                //             "q",
-                                //             e.currentTarget.value
-                                //         )
-                                //     }
-                                // }}
-                                // onBlur={(e)=>
-                                //     updateQuery(
-                                //         "q",
-                                //         e.target.value
-                                //     )
-                                // }
-                                endIcon={<Search/>}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.currentTarget.blur()
+                                        searchQuery(e.currentTarget.value)
+                                    }
+                                }}
+                                onBlur={(e)=>
+                                    searchQuery(e.target.value)
+                                }
+                                endIcon={<Search size={16}/>}
                             /> 
                         </section>
                         <section className="
@@ -104,61 +127,67 @@ export const TemplateForm = ({
                                 }
                             </aside>
 
-                            {/* {
-                                items && 
-                                items?.length > 18 &&
+                            {
+                                !!total && total > 1 &&
                                 <Pagination
+                                    className="w-max!"
+                                    size="small"
                                     page={Number(page)}
                                     count={Number(total)}
                                 />
-                            } */}
+                            }
                         </section>
                     </> :
                     <section className="flex flex-col items-center gap-2">
                         <p className="
-                            text-xl text-blue-100 font-semibold
+                            text-lg text-blue-100 font-semibold
                         ">
                             Create your first template 📜
                         </p>
 
-                        <Link to="https://sendin.com/templates">
-                            <Button
-                                size="xs"
-                                variant="primary"
-                            >
-                                + Add Template
-                            </Button>
-                        </Link>
+                        <Button
+                            size="xs"
+                            variant="primary"
+                            onClick={() => {
+                                chrome.tabs.create({
+                                    url: "https://sendin.com/templates",
+                                })
+                            }}
+                        >
+                            + Add Template
+                        </Button>
                     </section>
                 }
 
 				{
 					!!templates?.length &&
-                    <Link to="https://sendin.com/templates">
-                        <IconButton
-                            variant="neutral"
-                            disabled={!templates?.length}
-                            className="
-                                absolute bottom-2 left-2 text-xl!
-                                group-data-[single=true]:-bottom-15
-                            "
-                        >
-                            +
-                        </IconButton>
-                    </Link>
+                    <IconButton
+                        variant="neutral"
+                        disabled={!templates?.length}
+                        className="absolute bottom-2 left-2 text-xl!"
+                        onClick={() => {
+                            chrome.tabs.create({
+                                url: "https://sendin.com/templates",
+                            })
+                        }}
+                    >
+                        +
+                    </IconButton>
 				}
 
 
 			</section>
 
-			<article className="
-                bg-bluewash w-[55%] h-full
-                rounded-xl p-6
+			<section className="
+                bg-grey-100 w-[50%]
+                rounded-xl p-4 h-80
+                text-sm
             ">
-                <aside
+                <article
                     className="
                         flex flex-col gap-2
-                        w-full h-full
+                        w-full h-full 
+                        overflow-y-scroll
                     "
                     dangerouslySetInnerHTML={{
                         __html: parseLexicalHTML(
@@ -166,7 +195,7 @@ export const TemplateForm = ({
                         ),
                     }}
                 />
-            </article>
+            </section>
 		</>
 	)
 }

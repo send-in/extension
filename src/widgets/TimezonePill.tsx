@@ -22,19 +22,19 @@ export const TimezonePill = ({
 	className = "",
 }: TimezonePillProps) => {
 	return (
+        timezone &&
 		<aside
 			className={`
 				inline-flex items-center gap-2
-				px-3 py-1.5 rounded-full
-				bg-bluewash text-charcoal-200
-				text-sm font-medium
-				border border-grey-100
-				w-fit
-				${className}
+				p-3 py-2 rounded-full bg-blue-100 
+                text-white text-xl font-medium 
+                fill-white w-fit ${className}
 			`}
 		>
             <Globe/>
-			<span>{formatTimezone(timezone)}</span>
+			<span>{
+                formatTimezone(timezone)
+            }</span>
 		</aside>
 	)
 }

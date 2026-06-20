@@ -3,7 +3,6 @@ import { _ACCOUNT_URL } from "@/constants"
 
 import {
 	_GET,
-	_PUT,
 	IResponse,
 } from "@/lib/api/utils"
 
@@ -28,34 +27,6 @@ Promise<IResponse<IAccount>> => {
 			data: serializeAccount(
 				res.data,
 			),
-		}
-	}
-
-	return {
-		success: false,
-		error: res.error,
-	}
-}
-
-export const updateProfile = async(
-	payload: {
-		name?: string
-		timezone?: string
-	},
-): Promise<IResponse<boolean>> => {
-
-	const res = await _PUT(
-		_ACCOUNT_URL,{},
-		{
-			withAuth: true,
-			body: JSON.stringify(payload),
-		},
-	)
-
-	if (res.success) {
-		return {
-			success: true,
-			data: true,
 		}
 	}
 

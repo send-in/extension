@@ -53,11 +53,9 @@ export const CurrentTimePill = ({
 		<div
 			className={`
 				inline-flex items-center gap-2
-				px-3 py-1.5 rounded-full
-				bg-blue-100 text-white
-				text-sm font-medium
-				border w-fit fill-white
-				${className}
+				p-3 py-2 rounded-full bg-blue-100 
+                text-white text-xl font-medium 
+                fill-white w-fit ${className}
 			`}
 		>
 			<Clock />

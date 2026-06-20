@@ -13,6 +13,7 @@ import {
 import {
 	Chevron
 } from "@/icons"
+import { useSearchParams } from "react-router-dom"
 // #endregion
 
 const paginationVariants = {
@@ -29,7 +30,7 @@ const paginationVariants = {
 		btn btn-circle smooth ease-in-out bgb
 		active:scale-95 focus:outline-none border-none
 		disabled:opacity-50 disabled:cursor-not-allowed
-		smooth text-grey-200 btn-neutral
+		smooth text-grey-200 btn-neutral hover:text-blue-100
 	`,
 
 	variants: {
@@ -39,7 +40,7 @@ const paginationVariants = {
 	},
 
 	sizes: {
-		small: "btn-xs w-8 h-8 text-xs",
+		small: "btn-xs w-6 h-6 text-xs",
 		medium: "btn-sm w-10 h-10 text-sm",
 		large: "btn-md w-12 h-12 text-base",
 	},
@@ -81,12 +82,14 @@ const Pagination = forwardRef<HTMLElement, PaginationProps>(
 		},
 		ref
 	) => {
+        const [searchParams, setSearchParams] = useSearchParams()
+
 		const handleClick = (value: number) => () => {
-			// if (!disabled && value !== page){
-			// 	const params = new URLSearchParams(searchParams.toString())
-			// 	params.set("page", String(value))
-			// 	router.push(`${pathname}?${params.toString()}`)
-			// }
+			if (!disabled && value !== page){
+				const params = new URLSearchParams(searchParams)
+				params.set("page", String(value))
+				setSearchParams(params)
+			}
 		}
 
 		const totalNumbers = siblingCount * 2 + 3

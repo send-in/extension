@@ -13,11 +13,13 @@ import {
 } from "@/utils"
 
 import { 
-    getTimezonesForCountry 
+    getTimezone,
+    getTimezonesForCountry, 
 } from "countries-and-timezones"
 
 import { 
-    byCountry 
+    byCountry,
+    byIso
 } from "country-code-lookup"
 // #endregion
 
@@ -27,37 +29,44 @@ type Segment =
 	| "evening"
 	| "night"
 
-export const useTimezone = (
-	country: string,
+export const useTimezone = ({
+	country,
+	zone,
+}:{
+    country?: string,
 	zone?: string,
-) => {
+}) => {
 	const [now, setNow] = useState(
 		() => new Date(),
 	)
 
-	const code = useMemo(
-		() => byCountry(country || "India"),
-		[country],
-	)
+    const { code, timeZone } = useMemo(() => {
+        if (zone) {
+            const timeZone = getTimezone(zone)!
+            return {
+                timeZone,
+                code: byIso(
+                    timeZone.countries?.at(0)!
+                ),
+            }
+        }
 
-	const internalTimezone = useMemo(
-		() => getTimezonesForCountry(
-			code?.iso2 || "IN",
-		)?.at(0),
-		[code?.iso2],
-	)
-
-	const timeZone =
-		zone ||
-		internalTimezone?.name ||
-		"Asia/Kolkata"
+        const code = byCountry(country || "India")
+        return {
+            code,
+            timeZone: getTimezonesForCountry(
+                code?.iso2 || "IN"
+            )?.at(0)
+        }
+    }, [country, zone])
+    
 
 	const parts = useMemo(
 		() => Object.fromEntries(
 			new Intl.DateTimeFormat(
 				"en-US",
 				{
-					timeZone,
+					timeZone: timeZone!.name,
 					year: "numeric",
 					month: "numeric",
 					day: "numeric",
@@ -94,11 +103,11 @@ export const useTimezone = (
 		label: string,
 	) => {
 		const date = createDateInTimezone(
-			year, month, day + dayOffset, targetHour, timeZone,
+			year, month, day + dayOffset, targetHour, timeZone!.name,
 		)
 		return {
 			label,
-			...formatInTimezone(date, timeZone),
+			...formatInTimezone(date, timeZone!.name),
 			scheduledAt: date.toISOString(),
 		}
 	}
@@ -155,13 +164,13 @@ export const useTimezone = (
 		segment,
 		timeZone,
 
-		current: formatInTimezone(now, timeZone),
+		current: formatInTimezone(now, timeZone!.name),
 
 		morning,
 		afternoon,
 		evening,
 
 		...code,
-		...internalTimezone,
+		...timeZone,
 	}
 }

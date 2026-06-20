@@ -8,6 +8,7 @@ export const parseFilters = (
     params?: {
         ids?: string[]
         q?: string
+        limit?: number
         sort?: string
         page?: number
     }
@@ -20,6 +21,9 @@ export const parseFilters = (
 
     if (params.q)
         query.q = params.q
+
+    if (params.limit)
+        query.limit = params.limit
 
     if (params.page)
         query.page = params.page

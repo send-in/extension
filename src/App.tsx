@@ -1,74 +1,58 @@
-import { useEffect, useState } from "react"
+// #region imports
+import { 
+    useEffect, 
+    useState 
+} from "react"
 
 import {
-    BrowserRouter,
+    HashRouter,
     Routes,
     Route,
     Navigate,
 } from "react-router-dom"
+
+import { 
+    getProfile, 
+    IAccount 
+} from "@/lib"
 
 import {
     Navbar,
     MessageForm,
     TemplateForm,
 } from "@/components"
+// #endregion
 
-import {
-    getMessages,
-    getProfile,
-    getTemplates,
-} from "@/lib"
-
-import type {
-    IAccount,
-    IMessage,
-    ITemplate,
-} from "@/lib"
 
 const DashboardPage = () => {
     const [account, setAccount] = useState<IAccount>()
-    const [messages, setMessages] = useState<IMessage[]>([])
-    const [templates, setTemplates] = useState<ITemplate[]>([])
 
     useEffect(() => {
-        ;(async () => {
-            const [
-                accountRes,
-                messagesRes,
-                templatesRes,
-            ] = await Promise.all([
-                getProfile(),
-                getMessages({ limit: 5 }),
-                getTemplates({ limit: 5 }),
-            ])
-
-            setAccount(accountRes.data)
-            setMessages(messagesRes.data ?? [])
-            setTemplates(templatesRes.data ?? [])
+        (async () => {
+            const {data} = await getProfile()
+            if(data) setAccount(data)
         })()
     }, [])
 
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Navbar
                 name={account?.name}
                 picture={account?.picture}
             />
 
-            <main
+            <article
                 className="
-                    pt-[13%] h-full flex
-                    text-grey-200 text-base
-                    justify-between pr-2 gap-4
+                    h-full flex text-grey-200 text-base
+                    justify-between pr-2 pb-4 gap-4
                 "
             >
                 <Routes>
-                    <Route
+                     <Route
                         path="/"
                         element={
-                            <Navigate
+                           <Navigate
                                 to="/messages"
-                                replace
                             />
                         }
                     />
@@ -76,29 +60,19 @@ const DashboardPage = () => {
                     <Route
                         path="/messages"
                         element={
-                            <MessageForm
-                                messages={messages}
-                                total={messages.length}
-                                page={1}
-                                q=""
-                            />
+                           <MessageForm/>
                         }
                     />
 
                     <Route
                         path="/templates"
                         element={
-                            <TemplateForm
-                                templates={templates}
-                                total={templates.length}
-                                page={1}
-                                q=""
-                            />
+                            <TemplateForm/>
                         }
                     />
                 </Routes>
-            </main>
-        </BrowserRouter>
+            </article>
+        </HashRouter>
     )
 }
 

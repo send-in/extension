@@ -12,7 +12,6 @@ import {
 import {
 	cn
 } from "@/utils"
-import { Portal } from "@/context"
 // #endregion
 
 export interface PopoverProps {
@@ -58,30 +57,28 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 				</div>
 
                 {open && (
-                    <Portal>
+                    <div
+                        className="
+                            fixed inset-0 z-[1500] p-4
+                            bg-black/20 backdrop-blur-sm
+                            flex items-center justify-center
+                        "
+                    >
                         <div
-                            className="
-                                fixed inset-0 z-[1500] p-4
-                                bg-black/20 backdrop-blur-sm
-                                flex items-center justify-center
-                            "
+                            ref={popoverRef}
+                            className={cn(
+                                `
+                                    bg-white rounded-3xl
+                                    shadow-xl p-6
+                                    max-w-xl w-full
+                                    smooth animate-modal
+                                `,
+                                className,
+                            )}
                         >
-                            <div
-                                ref={popoverRef}
-                                className={cn(
-                                    `
-                                        bg-white rounded-3xl
-                                        shadow-xl p-6
-                                        max-w-xl w-full
-                                        smooth animate-modal
-                                    `,
-                                    className,
-                                )}
-                            >
-                                {children}
-                            </div>
+                            {children}
                         </div>
-                    </Portal>
+                    </div>
                 )}
             </div>
         )
