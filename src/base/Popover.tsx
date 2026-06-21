@@ -31,20 +31,6 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
         const [open, setOpen] = useState<boolean>(modalOpen)
         const popoverRef = useRef<HTMLDivElement>(null)
 
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                popoverRef.current &&
-                !popoverRef.current.contains(event.target as Node)
-            ) {
-                setOpen(false)
-            }
-        }
-
-        useEffect(() => {
-            document.addEventListener("mousedown", handleClickOutside)
-            return () => document.removeEventListener("mousedown", handleClickOutside)
-        }, [])
-
         useEffect(
             () => setOpen(modalOpen), 
             [modalOpen]
@@ -59,8 +45,8 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
                 {open && (
                     <div
                         className="
-                            fixed inset-0 z-[1500] p-4
-                            bg-black/20 backdrop-blur-sm
+                            fixed inset-0 z-1500 p-4
+                            bg-black/10 backdrop-blur-xs
                             flex items-center justify-center
                         "
                     >

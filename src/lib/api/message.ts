@@ -4,6 +4,7 @@ import { parseFilters } from "@/lib/common"
 
 import {
 	_GET,
+	_POST,
 	IResponse,
 } from "@/lib/api/utils"
 
@@ -31,6 +32,40 @@ export const getMessages = async(
 			data: res.data.map(
 				serializeMessage,
 			),
+		}
+	}
+
+	return {
+		success: false,
+		error: res.error,
+	}
+}
+
+
+export const createMessage = async(
+	payload: {
+		name: string
+		profile: string
+		picture?: string
+		company?: string
+		timezone?: string
+		message?: string
+		templateId?: string
+        scheduleTime?: string
+	}
+): Promise<IResponse<boolean>> => {
+	const res = await _POST(
+		_MESSAGES_URL,{},
+		{
+			withAuth: true,
+			body: JSON.stringify(payload),
+		},
+	)
+
+	if (res.success) {
+		return {
+			success: true,
+			data: true,
 		}
 	}
 

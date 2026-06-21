@@ -1,19 +1,24 @@
 export interface Profile {
     name: string
     location: string
-    url: string
+    profile: string
+    picture?: string
 }
 
-export function parseLocation(): Profile | null {
-    const profile: Profile = {
+export function parseProfile(): Profile | null {
+    const account: Profile = {
         name: "",
         location: "",
-        url: location.href,
+        profile: location.href,
     }
 
-    profile.name =
-        document.querySelector("h1")?.textContent?.trim() ??
-        ""
+    account.name = Array.from(
+        document.querySelectorAll<HTMLHeadingElement>("h2")
+    )?.at(1)?.textContent?.trim() ??  ""
+
+    account.picture = Array.from(
+        document.querySelectorAll<HTMLImageElement>("img")
+    )?.at(2)?.src ??  ""
 
     const contact = Array.from(
         document.querySelectorAll<HTMLAnchorElement>("a")
@@ -44,9 +49,9 @@ export function parseLocation(): Profile | null {
         parts.push(text)
     })
 
-    profile.location = parts.join(", ")
+    account.location = parts.join(", ")
 
-    return profile.location
-        ? profile
+    return account.location
+        ? account
         : null
 }

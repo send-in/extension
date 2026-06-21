@@ -31,6 +31,11 @@
       "js": ["timezone.js", "schedule.js"]
     }
   ],
+  
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
 
   "icons": {
     "192": "logo192.png",

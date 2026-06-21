@@ -14,9 +14,9 @@ const InformationCard = ({
 	return (
 		<aside
 			className={`
-                rounded-2xl bg-purple-100 p-2 px-4
+                rounded-full bg-purple-100 p-2 px-4
                 flex items-start gap-4 font-medium
-                justify-center max-w-full ${styles}
+                justify-between max-w-full ${styles}
             `}
 		>
 			<div
@@ -26,7 +26,7 @@ const InformationCard = ({
 			</div>
 
 			<p
-				className="text-purple-200 text-sm desktop:text-base"
+				className="text-purple-200 text-xl"
 			>
 				{description}
 			</p>

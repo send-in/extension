@@ -20,9 +20,6 @@ export function inferTimezone(location: string): string | undefined {
     let city: string | undefined
     let country: string | undefined
 
-    if (city)
-         city = normalizeCity(city)
-
     switch (parts.length) {
         case 1:
             if (/area$/i.test(parts[0])) {
@@ -42,6 +39,9 @@ export function inferTimezone(location: string): string | undefined {
             country = parts.at(-1)
             break
     }
+
+    if (city)
+        city = normalizeCity(city)
 
     const countryCode = country
         ? getCode(country)

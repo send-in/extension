@@ -71,9 +71,17 @@ const _request = async <T>(
             )
         }
 
-        if(withAuth){
-            // const store = await cookies()
-            // headers["Cookie"] = store.toString()
+        if (withAuth) {
+            // const cookies = await chrome?.cookies?.getAll({
+            //     url: import.meta.env.VITE_API_URL,
+            // })
+
+            // headers["Cookie"] = cookies
+            //     .map(cookie => `${cookie.name}=${cookie.value}`)
+            //     .join("; ")
+
+            headers["Cookie"] = 
+                "sendin_auth=MTc4MTI5NjI4MHxkVGhlZzhBNUdQdzlZZjg2eDBkNS1pbkUyUnhHWThNVEd2bTVXODhyT3RrNnRjZDVIaS1QWFdKNUVwT1laMjRlVlMxUnZoTFo4RzlsY0htX0V1b3JkcXQ0a25kdHd1Wi1YdHZpWWtheng0Y2FoclZ5cVJJYlA1blIwSU0wSVdZRExwUU1iUT09fJT5Iw0Rszpt-dalKKvDC6-l2zo5rF8BZBERtieEX7nZ"
         }
 
         const request = await fetch(

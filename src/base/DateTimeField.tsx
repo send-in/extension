@@ -15,7 +15,7 @@ const dateTimeVariants = {
 		input border-none
 		bg-blue-100 text-white
 		fill-white font-mada smooth
-		rounded-full
+		rounded-full max-w-max
 
         hover:outline-none
 		hover:ring-2 hover:ring-blue-300

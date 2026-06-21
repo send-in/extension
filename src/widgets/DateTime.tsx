@@ -1,31 +1,43 @@
 "use client"
 
 // #region imports
-import { useState } from "react"
+import { ReactNode, useState } from "react"
+
+import zones from "@/timezones.json"
+import { useTimezone } from "@/hooks"
 
 import { 
     createDateInTimezone,
     toDateTimeLocal
 } from "@/utils"
 
-import { useTimezone } from "@/hooks"
-import { TimeZone } from "@/components"
-import { Clock, Logo } from "@/icons"
+import { 
+    Clock, 
+    Logo, 
+    Search 
+} from "@/icons"
 
 import {
 	Popover,
 	Button,
 	Information,
     DateTimeField,
+    Select,
+    TextField,
 } from "@/base"
 // #endregion
 
 const DEFAULT_TIMEZONE = "Asia/Kolkata"
 
-const DateTime = ({ timezone }:{
-    timezone?: string
+export const DateTime = ({ timezone, onSave }:{
+    timezone?: string,
+    onSave?: (args: {
+        timezone: string
+        scheduleTime: string
+    }) => Promise<void>
 }) => {
     const [open, setOpen] = useState<boolean>(false)
+    const [search, setSearch] = useState<string>("")
 
     const [selectedTimezone, setSelectedTimezone] = useState<string>(
         timezone || DEFAULT_TIMEZONE
@@ -58,17 +70,20 @@ const DateTime = ({ timezone }:{
         setSelectedDateTime(undefined)
     }
 
-    const handleOpen = () => {
-        resetToSaved()
-        setOpen(true)
-    }
-
     const handleCancel = () => {
         resetToSaved()
         setOpen(false)
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        if (!selectedDateTime)
+            return
+
+        await onSave?.({
+            timezone: selectedTimezone,
+            scheduleTime: selectedDateTime,
+        })
+
         setOpen(false)
     }
 
@@ -92,15 +107,20 @@ const DateTime = ({ timezone }:{
                 top-36 desktop:top-52 
                 right-0 desktop:right-48
                 space-y-4 max-w-[28%]!
-                min-w-max
+                min-w-max text-xl!
+                tracking-tighter!
             "
             modalOpen={open}
 			trigger={
 				<Button
-					className="gap-3 min-w-58!"
-					variant={"primary"}
+                    size="xs"
+					className="
+                        min-w-32! mr-2 px-4!
+                        text-[1.5rem]! font-medium!
+                    "
+					variant="primary"
                     onClick={()=>setOpen(true)}
-					startIcon={<Logo/>}
+					startIcon={<Logo size={20}/>}
 				>
 					Schedule
 				</Button>
@@ -112,22 +132,48 @@ const DateTime = ({ timezone }:{
                 items-center px-2
             ">
                 <Logo 
-                    size={60} 
+                    size={45} 
                     className="fill-blue-100"
                 />
 
 				<aside className="
                     flex flex-col w-max
-                    gap-1 text-xl ml-auto
+                    gap-1 text-2xl ml-auto
                 ">
 					<p className="mr-2 text-right">
                         {`${current.date}, ${current.time}`}
                     </p>
 
-					<TimeZone
-                        className="w-full!"
-                        value={selectedTimezone}
-                        onChange={setSelectedTimezone}
+                    <Select<string | ReactNode>
+                        className="dropdown-end text-xl"
+                        buttonClassName="w-full!"
+                        onChange={val => {
+                            if (typeof val === "string") 
+                                setSelectedTimezone?.(val)
+                        }}
+                        selected={selectedTimezone}
+                        placeholder="Select Timezone"
+                        variant="primary"
+                        options={[
+                            <div
+                                className="sticky -top-2 bg-white py-2"
+                                key="search"
+                            >
+                                <TextField
+                                    key="search"
+                                    variant="filled"
+                                    placeholder="Search"
+                                    className="text-xl!"
+                                    onChange={(e)=>setSearch(e.target.value)}
+                                    endIcon={<Search size={18}/>}
+                                />
+                            </div>,
+                            ...zones.filter(
+                                val => val.toLowerCase()?.includes(
+                                    search.toLowerCase()
+                                )
+                            )
+                        ]}
                     />
 				</aside>
 			</section>
@@ -142,7 +188,7 @@ const DateTime = ({ timezone }:{
 				className="flex flex-col gap-2"
 			>
 				<Button
-					className="py-1!"
+					className="py-1! text-xl!"
 					textClassName="justify-between w-full !flex"
                     variant={selected.morning ? "primary" : "neutral"}
                     onClick={() => setSelectedDateTime(morning.scheduledAt)}
@@ -152,7 +198,7 @@ const DateTime = ({ timezone }:{
 				</Button>
 
 				<Button
-					textClassName="justify-between w-full !flex"
+					textClassName="justify-between w-full !flex text-xl!"
 					variant={selected.afternoon ? "primary" : "neutral"}
 					className="py-1!"
                     onClick={() => setSelectedDateTime(afternoon.scheduledAt)}
@@ -162,7 +208,7 @@ const DateTime = ({ timezone }:{
 				</Button>
 
 				<Button
-                    textClassName="justify-between w-full !flex"
+                    textClassName="justify-between w-full !flex text-xl!"
                     variant={selected.evening ? "primary" : "neutral"}
 					className="py-1!"
                     onClick={() => setSelectedDateTime(evening.scheduledAt)}
@@ -174,9 +220,8 @@ const DateTime = ({ timezone }:{
 
 			<section
 				className="
-                    text-base desktop:text-xl flex 
-                    justify-between gap-4 items-center 
-                    text-grey-200 px-2
+                    flex justify-between gap-4 
+                    items-center text-grey-200 px-2
                 "
 			>
 				<p>
@@ -184,20 +229,26 @@ const DateTime = ({ timezone }:{
 				</p>
 
                 <DateTimeField
+                    className="text-xl!"
                     startIcon={<Clock size={18}/>}
                     value={customValue}
                     onChange={handleCustomDate}
                 />
 			</section>
 
+            <div className="
+                h-px bg-grey-200 
+                rounded-full w-full
+            "/>
+
             <section
                 className="
                     flex justify-end gap-2
-                    pt-2 border-t border-grey-100
+                    pt-4
                 "
             >
                 <Button
-                    size="auto"
+                    className="text-xl!"
                     variant="neutral"
                     onClick={handleCancel}
                 >
@@ -205,7 +256,7 @@ const DateTime = ({ timezone }:{
                 </Button>
 
                 <Button
-                    size="auto"
+                    className="text-xl!"
                     loadingText="Saving"
                     variant="secondary"
                     onClick={handleSave}
@@ -216,5 +267,3 @@ const DateTime = ({ timezone }:{
 		</Popover>
 	)
 }
-
-export default DateTime
