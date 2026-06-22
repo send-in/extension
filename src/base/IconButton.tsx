@@ -24,6 +24,13 @@ const iconButtonVariants = {
 			[&>svg]:fill-blue-100
 			active:ring-blue-100
 		`,
+        fill: `
+            bg-blue-100 
+			[&>svg]:fill-white-100
+			active:ring-blue-100
+            hover:bg-blue-200 
+            active:brightness-95
+		`,
 		secondary: `
 			[&>svg]:fill-charcoal-100
 			active:ring-charcoal-100

@@ -6,6 +6,8 @@ import {
     useLocation,
 } from "react-router-dom"
 
+import { _APP_URL } from "@/constants"
+
 import { Logo } from "@/icons"
 import { Button } from "@/base"
 // #endregion
@@ -28,8 +30,13 @@ const links = [
         type: "internal"
 	},
     {
-		href: "https://sendin.com/profile",
+		href: `${_APP_URL}/profile`,
 		label: "Account",
+        type: "external"
+	},
+    {
+		href: `${_APP_URL}/profile/subscription`,
+		label: "Subscription",
         type: "external"
 	}
 ]
@@ -70,7 +77,7 @@ export const Navbar = ({
                         startIcon={<Logo size={20}/>}
                         onClick={() => {
                             chrome.tabs.create({
-                                url: "https://sendin.com/"
+                                url: _APP_URL
                             })
                         }}
                     >
@@ -80,7 +87,7 @@ export const Navbar = ({
             </section>
 
             <section className="
-                py-2 px-8 w-[50%] flex
+                py-2 px-4 w-[50%] flex
                 items-center z-100 justify-between 
                 rounded-full bg-blue-100 text-sm
             ">

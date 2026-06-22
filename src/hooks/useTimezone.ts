@@ -136,19 +136,29 @@ export const useTimezone = ({
 		}
 
 		case "night": {
-			morning   = createScheduled(0, 8,  "Later this morning")
-			afternoon = createScheduled(0, 14, "This afternoon")
-			evening   = createScheduled(0, 18, "This evening")
-			break
-		}
+            if (hour < 5) {
+                morning   = createScheduled(0, 8,  "Later this morning")
+                afternoon = createScheduled(0, 14, "This afternoon")
+                evening   = createScheduled(0, 18, "This evening")
+            } else {
+                morning   = createScheduled(1, 8,  "Tomorrow morning")
+                afternoon = createScheduled(1, 14, "Tomorrow afternoon")
+                evening   = createScheduled(1, 18, "Tomorrow evening")
+            }
+            break
+        }
 
 		case "evening":
-		default: {
-			morning   = createScheduled(1, 8,  "Tomorrow morning")
-			afternoon = createScheduled(1, 14, "Tomorrow afternoon")
-			evening   = createScheduled(1, 18, "Tomorrow evening")
-			break
-		}
+        default: {
+            morning   = createScheduled(1, 8,  "Tomorrow morning")
+            afternoon = createScheduled(1, 14, "Tomorrow afternoon")
+            evening   = createScheduled(
+                hour < 18 ? 0 : 1,
+                18,
+                hour < 18 ? "This evening" : "Tomorrow evening",
+            )
+            break
+        }
 	}
 
 	useEffect(() => {

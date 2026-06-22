@@ -6,10 +6,16 @@ import {
     useState 
 } from "react"
 
-import { Search } from "@/icons"
+import { useSearchParams } from "react-router-dom"
+
+import { _APP_URL } from "@/constants"
 import { DashboardCard } from "@/components"
 import { parseLexicalHTML } from "@/utils"
-import { useSearchParams } from "react-router-dom"
+
+import { 
+    Search, 
+    Edit 
+} from "@/icons"
 
 import { 
     getMessages,
@@ -18,6 +24,7 @@ import {
 
 import {
 	Button,
+	IconButton,
 	Pagination,
 	TextField,
 } from "@/base"
@@ -149,7 +156,7 @@ export const MessageForm = () => {
                             variant="primary"
                             onClick={() => {
                                 chrome.tabs.create({
-                                    url: "https://sendin.com/connections",
+                                    url: `${_APP_URL}/connections`,
                                 })
                             }}
                         >
@@ -162,7 +169,7 @@ export const MessageForm = () => {
             <section className="
                 bg-grey-100 w-[50%]
                 rounded-xl p-4 h-80
-                text-sm
+                text-sm relative
             ">
                 <aside
                     className="
@@ -177,6 +184,20 @@ export const MessageForm = () => {
                         ),
                     }}
                 />
+
+                <IconButton
+                    size="sm"
+                    variant="fill"
+                    className="
+                        absolute bottom-2 
+                        right-2 text-white
+                    "
+                    onClick={() => {
+                        chrome.tabs.create({url: _APP_URL})
+                    }}
+                >
+                    <Edit size={16}/>
+                </IconButton>
             </section>
 
 		</>

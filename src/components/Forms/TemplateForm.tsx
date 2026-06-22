@@ -6,10 +6,13 @@ import {
     useState 
 } from "react"
 
-import { Search } from "@/icons"
-import { TemplateCard } from "@/components"
-import { parseLexicalHTML } from "@/utils"
 import { useSearchParams } from "react-router-dom"
+
+import { _APP_URL } from "@/constants"
+
+import { Copy, Search } from "@/icons"
+import { TemplateCard } from "@/components"
+import { parseLexical, parseLexicalHTML } from "@/utils"
 
 import { 
     getTemplates, 
@@ -150,7 +153,7 @@ export const TemplateForm = () => {
                             variant="primary"
                             onClick={() => {
                                 chrome.tabs.create({
-                                    url: "https://sendin.com/templates",
+                                    url: `${_APP_URL}/templates`,
                                 })
                             }}
                         >
@@ -167,7 +170,7 @@ export const TemplateForm = () => {
                         className="absolute bottom-2 left-2 text-xl!"
                         onClick={() => {
                             chrome.tabs.create({
-                                url: "https://sendin.com/templates",
+                                url: `${_APP_URL}/templates`,
                             })
                         }}
                     >
@@ -181,12 +184,12 @@ export const TemplateForm = () => {
 			<section className="
                 bg-grey-100 w-[50%]
                 rounded-xl p-4 h-80
-                text-sm
+                text-sm relative
             ">
                 <article
                     className="
                         flex flex-col gap-2
-                        w-full h-full 
+                        w-full h-full
                         overflow-y-scroll
                     "
                     dangerouslySetInnerHTML={{
@@ -195,6 +198,23 @@ export const TemplateForm = () => {
                         ),
                     }}
                 />
+
+                <IconButton
+                    size="sm"
+                    variant="fill"
+                    className="absolute bottom-2 right-2"
+                    onClick={async () => {
+                        try {
+                            await navigator.clipboard.writeText(
+                                parseLexical(selected?.value)
+                            )
+                        } catch (err) {
+                            console.error("Failed to copy:", err)
+                        }
+                    }}
+                >
+                    <Copy size={16}/>
+                </IconButton>
             </section>
 		</>
 	)

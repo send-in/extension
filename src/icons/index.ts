@@ -14,4 +14,5 @@ export { default as Globe } from "./Globe"
 export { default as GoTo } from "./GoTo"
 export { default as Logo } from "./Logo"
 export { default as Copy } from "./Copy"
+export { default as Edit } from "./Edit"
 // #endregion

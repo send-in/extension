@@ -9,6 +9,11 @@ export type ICurrency =
 // Simple className utility (no external dependencies)
 type ClassValue = string | number | boolean | undefined | null | ClassValue[]
 
+const FORMAT_BOLD = 1
+const FORMAT_ITALIC = 2
+const FORMAT_STRIKETHROUGH = 4
+const FORMAT_UNDERLINE = 8
+
 type LexicalNode = {
 	type: string
 	children?: LexicalNode[]
@@ -360,3 +365,135 @@ export const parseLexicalHTML = (
 			.join("")
 	}
 }
+
+export const parseLexical = (
+    value?: string,
+): string => {
+    if (!value)
+        return ""
+
+    try {
+        const document = JSON.parse(value)
+
+        return (document.root.children ?? [])
+            .map(renderBlock)
+            .join("\n")
+            .trim()
+    } catch {
+        return value
+    }
+}
+
+const renderBlock = (node: any): string => {
+    switch (node.type) {
+        case "paragraph":
+            return renderInline(node)
+
+        case "list":
+            return (node.children ?? [])
+                .map((item: any, index: number) => {
+                    const text = renderInline(item).trim()
+
+                    if (!text)
+                        return ""
+
+                    return node.listType === "number"
+                        ? `${index + 1}. ${text}`
+                        : `• ${text}`
+                })
+                .filter(Boolean)
+                .join("\n")
+
+        default:
+            return renderInline(node)
+    }
+}
+
+const renderInline = (node: any): string => {
+    switch (node.type) {
+        case "text":
+            return applyFormatting(
+                node.text ?? "",
+                node.format ?? 0,
+            )
+
+        default:
+            return (node.children ?? [])
+                .map(renderInline)
+                .join("")
+    }
+}
+
+const applyFormatting = (
+    text: string,
+    format: number,
+): string => {
+    let result = text
+
+    if (format & FORMAT_BOLD)
+        result = toBold(result)
+
+    if (format & FORMAT_ITALIC)
+        result = toItalic(result)
+
+    if (format & FORMAT_UNDERLINE)
+        result = toUnderline(result)
+
+    if (format & FORMAT_STRIKETHROUGH)
+        result = toStrike(result)
+
+    return result
+}
+
+const toBold = (text: string) =>
+    [...text]
+        .map(char => {
+            const code = char.charCodeAt(0)
+
+            if (code >= 48 && code <= 57)
+                return String.fromCodePoint(
+                    0x1D7CE + (code - 48),
+                )
+
+            if (code >= 65 && code <= 90)
+                return String.fromCodePoint(
+                    0x1D5D4 + (code - 65),
+                )
+
+            if (code >= 97 && code <= 122)
+                return String.fromCodePoint(
+                    0x1D5EE + (code - 97),
+                )
+
+            return char
+        })
+        .join("")
+
+const toItalic = (text: string) =>
+    [...text]
+        .map(char => {
+            const code = char.charCodeAt(0)
+
+            if (code >= 65 && code <= 90)
+                return String.fromCodePoint(
+                    0x1D608 + (code - 65),
+                )
+
+            if (code >= 97 && code <= 122)
+                return String.fromCodePoint(
+                    0x1D622 + (code - 97),
+                )
+
+            return char
+        })
+        .join("")
+
+const toUnderline = (text: string) =>
+    [...text]
+        .map(char => `${char}\u0332`)
+        .join("")
+
+const toStrike = (text: string) =>
+    [...text]
+        .map(char => `${char}\u0336`)
+        .join("")
