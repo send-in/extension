@@ -1,6 +1,7 @@
 // #region Component Exports
-export { useTimezone } from './useTimezone'
-export { useDebounce } from "./useDebounce"
 export { useMouse } from "./useMouse"
+export { useTimezone } from "./useTimezone"
+export { useDebounce } from "./useDebounce"
 export { useShortcut } from "./useShortcut"
+export { useAuthorized } from "./useAuthorized"
 // #endregion

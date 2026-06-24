@@ -331,13 +331,16 @@ export const parseLexicalHTML = (
 				case "text": {
 					let text = node.text ?? ""
 
-					if (node.format && node.format & 1)
+					if (node.format && node.format & FORMAT_BOLD)
 						text = `<strong>${text}</strong>`
 
-					if (node.format && node.format & 2)
+					if (node.format && node.format & FORMAT_ITALIC)
 						text = `<em>${text}</em>`
+                    
+                    if (node.format && node.format & FORMAT_STRIKETHROUGH)
+                        text = `<s>${text}</s>`
 
-					if (node.format && node.format & 8)
+					if (node.format && node.format & FORMAT_UNDERLINE)
 						text = `<u>${text}</u>`
 
 					if (node.format && node.format & 16)
@@ -374,7 +377,6 @@ export const parseLexical = (
 
     try {
         const document = JSON.parse(value)
-
         return (document.root.children ?? [])
             .map(renderBlock)
             .join("\n")
@@ -416,6 +418,9 @@ const renderInline = (node: any): string => {
                 node.text ?? "",
                 node.format ?? 0,
             )
+
+        case "linebreak":
+            return "\n"
 
         default:
             return (node.children ?? [])

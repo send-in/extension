@@ -18,8 +18,10 @@ import {
 
 import {
     Navbar,
+    LoginForm,
     MessageForm,
     TemplateForm,
+    Protected,
 } from "@/components"
 // #endregion
 
@@ -44,32 +46,38 @@ const DashboardPage = () => {
             <article
                 className="
                     h-full flex text-grey-200 text-base
-                    justify-between pr-2 pb-4 gap-4
+                    justify-between p-2 gap-4
                 "
             >
                 <Routes>
-                     <Route
-                        path="/"
+                    <Route path="/login"
                         element={
-                           <Navigate
-                                to="/messages"
-                            />
+                           <LoginForm/>
                         }
                     />
+                    
+                    <Route element={<Protected />}>
+                        <Route path="/"
+                            element={
+                            <Navigate
+                                    to="/messages"
+                                />
+                            }
+                        />
 
-                    <Route
-                        path="/messages"
-                        element={
-                           <MessageForm/>
-                        }
-                    />
 
-                    <Route
-                        path="/templates"
-                        element={
-                            <TemplateForm/>
-                        }
-                    />
+                        <Route path="/messages"
+                            element={
+                                <MessageForm/>
+                            }
+                        />
+
+                        <Route path="/templates"
+                            element={
+                                <TemplateForm/>
+                            }
+                        />
+                    </Route>
                 </Routes>
             </article>
         </HashRouter>

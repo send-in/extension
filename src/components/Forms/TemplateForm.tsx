@@ -191,6 +191,10 @@ export const TemplateForm = () => {
                         flex flex-col gap-2
                         w-full h-full
                         overflow-y-scroll
+                        [&_ul]:list-disc
+                        [&_ul]:pl-6
+                        [&_ol]:list-decimal
+                        [&_ol]:pl-6
                     "
                     dangerouslySetInnerHTML={{
                         __html: parseLexicalHTML(

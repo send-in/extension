@@ -10,6 +10,7 @@ import { _APP_URL } from "@/constants"
 
 import { Logo } from "@/icons"
 import { Button } from "@/base"
+import { useAuthorized } from "@/hooks"
 // #endregion
 
 const linkClass = `
@@ -51,15 +52,18 @@ export const Navbar = ({
     picture = ""
 }: INavbar) => {
     const { pathname } = useLocation()
+    const { authorized } = useAuthorized()
 
 	return (
-		<nav
-			className="
-				w-full flex items-end
+        authorized &&
+        <nav
+            data-path={pathname}
+            className="
+                w-full flex items-end
                 gap-10 z-100 justify-between
                 font-medium text-charcoal-200
-			"
-		>
+            "
+        >
             <section className="flex gap-2 items-center">
                 <img
                     className="rounded-full h-14 w-14 mt-2 ml-2"
@@ -72,7 +76,7 @@ export const Navbar = ({
                     flex flex-col items-start
                 ">
                     <p>{name || "SendIn"}</p>
-                     <Button
+                    <Button
                         size="xs"
                         startIcon={<Logo size={20}/>}
                         onClick={() => {
@@ -119,6 +123,6 @@ export const Navbar = ({
                 ))}
             </section>
 
-		</nav>
+        </nav>
 	)
 }

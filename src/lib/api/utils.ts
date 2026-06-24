@@ -1,5 +1,4 @@
-// #region imports
-// #endregion
+import { _ORIGIN_URL } from "@/constants"
 
 export interface IResponse<T> {
     data?: T
@@ -72,13 +71,12 @@ const _request = async <T>(
         }
 
         if (withAuth) {
-            const cookies = await chrome?.cookies?.getAll({
-                url: import.meta.env.VITE_API_URL,
+            const cookies = await chrome.cookies.getAll({
+                url: _ORIGIN_URL,
             })
-
             headers["Cookie"] = cookies
                 .map(cookie => `${cookie.name}=${cookie.value}`)
-                .join("; ")
+                .join("; ")   
         }
 
         const request = await fetch(
