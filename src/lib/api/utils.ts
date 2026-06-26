@@ -71,9 +71,10 @@ const _request = async <T>(
         }
 
         if (withAuth) {
-            const cookies = await chrome.cookies.getAll({
+            const cookies = await chrome?.cookies?.getAll({
                 url: _ORIGIN_URL,
             })
+
             headers["Cookie"] = cookies
                 .map(cookie => `${cookie.name}=${cookie.value}`)
                 .join("; ")   
